@@ -1,57 +1,58 @@
 ---
 stages:
   - test
-  - pages
-  # - publish
+  - publish
+  - master
   - clean
 
 variables:
-  # Unique image names for parallel builds
-  COMPOSE_PROJECT_NAME: ${CI_PROJECT_NAME}_${CI_PIPELINE_ID}
+  RELEASE_IMAGE: ${CI_REGISTRY_IMAGE}:latest
+  COMMIT_IMAGE: ${CI_REGISTRY_IMAGE}:$CI_COMMIT_SHORT_SHA
+  COMPOSE_PROJECT_NAME: $CI_PROJECT_NAME_$CI_COMMIT_SHORT_SHA
 
-default:
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  tags:
-    - FTS_LAB_CONCURRENT
-
-workflow:
-  rules:
-    # Needed to enable merged results pipelines
-    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
-    # The default trigger for the pipelines
-    - if: "$CI_PIPELINE_SOURCE == 'push'"
-
+# CI Pipeline stages in this file are pinned to a runner
+# with the tag of `lab`.  If you are wanting to use the JC
+# runner please remove the `tags` key from each stage.  If
+# you would like to change the runner to another tagged
+# runner please replace the `lab` tag in each stage with
+# the appropriate runner tag
 test:
   stage: test
-  script:
-    - docker-compose up --build --force-recreate --quiet-pull --exit-code-from test test
-
-# Requires 'package' and 'release' sections of the Dockerfile to be un-commented
-# publish:
-#   stage: publish
-#   script:
-#     - docker-compose up --build --force-recreate --quiet-pull --exit-code-from release release
-#   only:
-#     # This matches tags of the format "v1.0.0-alpha" where "-alpha" is optional
-#     - "/^v\\d+\\.\\d+\\.\\d+(-\\w+)?$/"
-
-pages:
-  stage: pages
-  script:
-    - pip install -U sphinx myst-parser sphinx-autoapi sphinx-rtd-theme
-    - sphinx-build -b html ./docs public
-  artifacts:
-    paths:
-      - public
-  rules:
-    - if: "$CI_COMMIT_BRANCH == 'master'"
-    - if: "$CI_COMMIT_BRANCH == 'main'"
   tags:
     - FTS_LAB_CONCURRENT
+  script:
+    - docker-compose build test
+    - docker-compose up --build --force-recreate --quiet-pull --exit-code-from test test
+
+publish:
+  stage: publish
+  tags:
+    - FTS_LAB_CONCURRENT
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker-compose build cli
+    # Push short sha tagged image
+    - docker push $COMMIT_IMAGE
+
+master:
+  stage: master
+  tags:
+    - FTS_LAB_CONCURRENT
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker tag $COMMIT_IMAGE $RELEASE_IMAGE
+    # Push latest image
+    - docker push $RELEASE_IMAGE
+  only:
+    - master
 
 clean:
   stage: clean
+  tags:
+    - FTS_LAB_CONCURRENT
   script:
     - docker-compose down --rmi local --remove-orphans --volumes || true
+    - docker rmi -f $COMMIT_IMAGE $RELEASE_IMAGE || true
   when: always
