@@ -1,0 +1,22 @@
+---
+version: "3.8"
+services:
+  # Test service for running unit and integration test caches. Supporting
+  # services should be linked here.
+  test:
+    build:
+      context: "."
+      target: "test"
+
+  cli:
+    image: ${COMMIT_IMAGE:-local/paloalto-log-profile-update:cli}
+    build:
+      target: cli
+      context: .
+    environment:
+      RD_OPTION_DGROUP: $RD_OPTION_DGROUP
+      RD_OPTION_PAN_NAME: $RD_OPTION_PAN_NAME
+      RD_OPTION_RUPDATE: $RD_OPTION_RUPDATE
+      RD_OPTION_APIKEY: $RD_OPTION_APIKEY
+    command: palo_profile.py
+    tty: true
