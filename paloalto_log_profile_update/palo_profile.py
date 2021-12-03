@@ -67,7 +67,7 @@ def display_results(sec_rules):
             (not rule.log_setting)
             or (not rule.group)
             or (not isinstance(rule.group, list))
-            or (rule.log_setting != "default" or rule.group[0] != "default")
+            or (rule.log_setting != "default" or rule.group[0] != "default" or rule.group[0] != "scanner")
         ):
             lnu = 4 if not rule.log_setting else len(rule.log_setting)
             gnu = 2 if not rule.group else len(str(rule.group))
