@@ -71,10 +71,7 @@ def display_results(sec_rules):
             (not rule.log_setting)
             or (not rule.group)
             or (not isinstance(rule.group, list))
-            or (
-                rule.log_setting != "default"
-                and (not rule.tag or ("No-Log" not in rule.tag and "DNS_NTP Rules" not in rule.tag))
-            )
+            or (rule.log_setting != "default" and (not rule.tag or "No-Log" not in rule.tag))
             or (
                 rule.group[0] != "default"
                 and rule.group[0] != "scanner"
@@ -102,9 +99,8 @@ if __name__ == "__main__":
             display_results(secrules)
 
     msg = {}
-    msg["to"] = "harish.krishnoji@fiserv.com"
-    # msg["to"] = "Rodrigo.Miranda@fiserv.com, mohana.ramaswamy@fiserv.com, mike.mahon@fiserv.com"
-    # msg["cc"] = "georgette.ewan@fiserv.com, harish.krishnoji@fiserv.com, Andy.Clark@fiserv.com"
+    msg["to"] = "Rodrigo.Miranda@fiserv.com, mohana.ramaswamy@fiserv.com, mike.mahon@fiserv.com"
+    msg["cc"] = "georgette.ewan@fiserv.com, harish.krishnoji@fiserv.com, Andy.Clark@fiserv.com"
     msg["body"] = emailR
     logger.info("Sending Email Notification...")
     send_email(**msg)
