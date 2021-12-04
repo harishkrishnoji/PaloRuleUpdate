@@ -73,7 +73,7 @@ def display_results(sec_rules):
             or (not isinstance(rule.group, list))
             or (
                 rule.log_setting != "default"
-                and (not rule.tag or "No-Log" not in rule.tag or "DNS_NTP Rules" not in rule.tag)
+                and (not rule.tag or ("No-Log" not in rule.tag and "DNS_NTP Rules" not in rule.tag))
             )
             or (
                 rule.group[0] != "default"
