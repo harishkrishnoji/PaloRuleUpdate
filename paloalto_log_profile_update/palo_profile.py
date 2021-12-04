@@ -71,9 +71,13 @@ def display_results(sec_rules):
             (not rule.log_setting)
             or (not rule.group)
             or (not isinstance(rule.group, list))
-            # or (rule.log_setting != "default" or rule.group[0] != "default" or rule.group[0] != "scanner")
-            or (rule.log_setting != "default" or rule.log_start or not rule.log_end and ("No-Log" not in rule.tag))
-            or (rule.group[0] != "default" or rule.group[0] != "scanner" or ("No-Log" not in rule.tag))
+            or (
+                rule.log_setting != "default"
+                or rule.log_start
+                or not rule.log_end
+                and (rule.tag and "No-Log" not in rule.tag)
+            )
+            or (rule.group[0] != "default" or rule.group[0] != "scanner" or (rule.tag and "No-Log" not in rule.tag))
             and (rule.action == "allow")
         ):
             lnu = 4 if not rule.log_setting else len(rule.log_setting)
