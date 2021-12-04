@@ -77,8 +77,8 @@ def display_results(sec_rules):
                 and rule.group[0] != "scanner"
                 and (not rule.tag or "Blacklists" not in rule.tag)
             )
-            and (rule.action == "allow")
-        ):
+        ) and (rule.action == "allow"):
+
             lnu = 4 if not rule.log_setting else len(rule.log_setting)
             gnu = 2 if not rule.group else len(str(rule.group))
             emailR.append(f"{rule.log_setting}{' '*(15-lnu)}{rule.group}{' '*(20-gnu)}{rule.name}")
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     emailR.append(f"LogSetting{' '*(15-10)}Group{' '*(20-5)}RuleName")
     for dev in list(panos.panorama.PanoramaDeviceGroupHierarchy(pan).fetch()):
         if dev in DGROUP_LST or "All" in DGROUP_LST:
-            emailR.append(f"{'='*35} {dev}")
+            emailR.append(f"{'='*50} {dev}")
             logger.info("Gathering Security Rulebase for DeviceGroup: %s...", dev)
             secrules = get_rulebase(dev)
             display_results(secrules)
