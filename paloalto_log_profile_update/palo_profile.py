@@ -1,3 +1,4 @@
+# pylint: disable=R0916
 """Palo Alto Rules - Log Profile Update."""
 import sys
 import os
@@ -41,8 +42,11 @@ def update_rule(rule):
         rule (class): Class Rule.
     """
     if RULE_UPDATE:
+        logger.info("Updated Rule: %s", rule.name)
         rule.group = ["default"]
         rule.log_setting = "default"
+        rule.log_start = False
+        rule.log_end = True
 
 
 def apply_rule(sec_rules):
@@ -67,7 +71,10 @@ def display_results(sec_rules):
             (not rule.log_setting)
             or (not rule.group)
             or (not isinstance(rule.group, list))
-            or (rule.log_setting != "default" or rule.group[0] != "default" or rule.group[0] != "scanner")
+            # or (rule.log_setting != "default" or rule.group[0] != "default" or rule.group[0] != "scanner")
+            or (rule.log_setting != "default" or rule.log_start or not rule.log_end and ("No-Log" not in rule.tag))
+            or (rule.group[0] != "default" or rule.group[0] != "scanner" or ("No-Log" not in rule.tag))
+            and (rule.action == "allow")
         ):
             lnu = 4 if not rule.log_setting else len(rule.log_setting)
             gnu = 2 if not rule.group else len(str(rule.group))
@@ -83,14 +90,15 @@ if __name__ == "__main__":
     emailR.append(f"LogSetting{' '*(15-10)}Group{' '*(20-5)}RuleName")
     for dev in list(panos.panorama.PanoramaDeviceGroupHierarchy(pan).fetch()):
         if dev in DGROUP_LST or "All" in DGROUP_LST:
-            emailR.append(f"{'='*15} {dev} {'='*15}")
+            emailR.append(f"{'='*35} {dev}")
             logger.info("Gathering Security Rulebase for DeviceGroup: %s...", dev)
             secrules = get_rulebase(dev)
             display_results(secrules)
 
     msg = {}
-    msg["to"] = "Rodrigo.Miranda@fiserv.com, mohana.ramaswamy@fiserv.com, mike.mahon@fiserv.com"
-    msg["cc"] = "georgette.ewan@fiserv.com, harish.krishnoji@fiserv.com, Andy.Clark@fiserv.com"
+    msg["to"] = "harish.krishnoji@fiserv.com"
+    # msg["to"] = "Rodrigo.Miranda@fiserv.com, mohana.ramaswamy@fiserv.com, mike.mahon@fiserv.com"
+    # msg["cc"] = "georgette.ewan@fiserv.com, harish.krishnoji@fiserv.com, Andy.Clark@fiserv.com"
     msg["body"] = emailR
     logger.info("Sending Email Notification...")
     send_email(**msg)
