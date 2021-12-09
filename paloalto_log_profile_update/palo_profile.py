@@ -99,8 +99,9 @@ if __name__ == "__main__":
             display_results(secrules)
 
     msg = {}
-    msg["to"] = "Rodrigo.Miranda@fiserv.com, mohana.ramaswamy@fiserv.com, mike.mahon@fiserv.com"
-    msg["cc"] = "georgette.ewan@fiserv.com, harish.krishnoji@fiserv.com, Andy.Clark@fiserv.com"
+    msg["to"] = "harish.krishnoji@fiserv.com"
+    # msg["to"] = "Rodrigo.Miranda@fiserv.com, mohana.ramaswamy@fiserv.com, mike.mahon@fiserv.com"
+    # msg["cc"] = "georgette.ewan@fiserv.com, harish.krishnoji@fiserv.com, Andy.Clark@fiserv.com"
     msg["body"] = emailR
     logger.info("Sending Email Notification...")
     send_email(**msg)
