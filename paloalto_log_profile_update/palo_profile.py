@@ -68,7 +68,7 @@ def display_results(sec_rules):
     """
     for rule in sec_rules:
         if (
-            (not rule.log_setting)
+            (not rule.log_setting and (not rule.tag or "No-Log" not in rule.tag))
             or (not rule.group)
             or (not isinstance(rule.group, list))
             or (rule.log_setting != "default" and (not rule.tag or "No-Log" not in rule.tag))
