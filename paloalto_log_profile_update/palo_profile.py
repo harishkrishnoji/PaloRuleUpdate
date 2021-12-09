@@ -27,11 +27,12 @@ def get_rulebase(device):
     """
     device_group = panos.panorama.DeviceGroup(device)
     pre_rulebase = panos.policies.PreRulebase()
-    post_rulebase = panos.policies.PostRulebase()
-    device_group.extend([pre_rulebase, post_rulebase])
+    # post_rulebase = panos.policies.PostRulebase()
+    # device_group.extend([pre_rulebase, post_rulebase])
+    device_group.extend([pre_rulebase])
     pan.add(device_group)
     security_rules = panos.policies.SecurityRule.refreshall(pre_rulebase)
-    security_rules.extend(panos.policies.SecurityRule.refreshall(post_rulebase))
+    # security_rules.extend(panos.policies.SecurityRule.refreshall(post_rulebase))
     return security_rules
 
 
