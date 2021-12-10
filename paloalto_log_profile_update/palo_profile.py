@@ -67,6 +67,7 @@ def display_results(sec_rules):
     Args:
         sec_rules (Class): Class Rulebase.
     """
+    apply = False
     for rule in sec_rules:
         if (
             (not rule.log_setting and (not rule.tag or "No-Log" not in rule.tag))
@@ -80,11 +81,13 @@ def display_results(sec_rules):
             )
         ) and (rule.action == "allow"):
 
+            apply = True
             lnu = 4 if not rule.log_setting else len(rule.log_setting)
             gnu = 2 if not rule.group else len(str(rule.group))
             emailR.append(f"{rule.log_setting}{' '*(15-lnu)}{rule.group}{' '*(20-gnu)}{rule.name}")
             update_rule(rule)
-    apply_rule(sec_rules)
+    if apply:
+        apply_rule(sec_rules)
 
 
 if __name__ == "__main__":
