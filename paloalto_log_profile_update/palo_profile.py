@@ -96,6 +96,7 @@ if __name__ == "__main__":
     logger.info("Gathering list of Device Group...")
     emailR.append("List of PaloAlto rules which does not have LogSetting, Group, LogStart, and LogEnd set properly")
     emailR.append(f"{'='*100}")
+    emailR.append("")
     emailR.append(f"Update profile is set to : {os.environ.get('RD_OPTION_RUPDATE')}")
     emailR.append(f"{'='*60}")
     emailR.append(f"LogSetting{' '*(15-10)}Group{' '*(20-5)}RuleName")
