@@ -2,6 +2,7 @@
 """Palo Alto Rules - Log Profile Update."""
 import sys
 import os
+import time
 import panos
 from panos import panorama
 from helper_fts.email import send_email
@@ -57,8 +58,13 @@ def apply_rule(sec_rules):
         sec_rules (Class): Class Rulebase.
     """
     if RULE_UPDATE:
-        sec_rules[0].apply_similar()
-        logger.info("Updated Rules were commited to Panaram")
+        try:
+            sec_rules[0].apply_similar()
+            logger.info("Updated Rules were commited to Panaram")
+        # except (pan.xapi.PanXapiError, panos.errors.PanURLError) as err:
+        except panos.errors.PanURLError as err:
+            logger.info(err)
+            time.sleep(60)
 
 
 def display_results(sec_rules):
