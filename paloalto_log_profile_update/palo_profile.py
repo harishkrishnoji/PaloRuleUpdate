@@ -63,8 +63,9 @@ def apply_rule(sec_rules):
             logger.info("Updated Rules were commited to Panaram")
         # except (pan.xapi.PanXapiError, panos.errors.PanURLError) as err:
         except panos.errors.PanURLError as err:
+            emailR.append("ERROR: Timeout during commit process.")
             logger.info(err)
-            time.sleep(60)
+            time.sleep(30)
 
 
 def display_results(sec_rules):
