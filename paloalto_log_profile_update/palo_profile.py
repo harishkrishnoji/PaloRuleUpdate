@@ -107,7 +107,9 @@ if __name__ == "__main__":
     emailR.append(f"Update profile is set to : {os.environ.get('RD_OPTION_RUPDATE')}")
     emailR.append(f"{'='*60}")
     emailR.append(f"LogSetting{' '*(15-10)}Group{' '*(20-5)}RuleName")
+    # DISREGARD = ["DFC-NA-CHD, DFC-NA-OMA"]
     for dev in list(panos.panorama.PanoramaDeviceGroupHierarchy(pan).fetch()):
+        # if dev in DGROUP_LST or ("All" in DGROUP_LST and dev not in DISREGARD):
         if dev in DGROUP_LST or "All" in DGROUP_LST:
             emailR.append(f"{'='*60} {dev}")
             logger.info("Gathering Security Rulebase for DeviceGroup: %s...", dev)
