@@ -15,7 +15,7 @@ HOSTNAME = os.environ.get("RD_OPTION_PAN_NAME")
 API_KEY = os.environ.get("RD_OPTION_APIKEY")
 DGROUP_LST = os.environ.get("RD_OPTION_DGROUP").split(",")
 RULE_UPDATE = "YES" in os.environ.get("RD_OPTION_RUPDATE")
-pan = panorama.Panorama(HOSTNAME, api_key=API_KEY, port=443, timeout=30)
+pan = panorama.Panorama(HOSTNAME, api_key=API_KEY, port=443)
 emailR = []
 logger = get_logger("PaloAlto_Log_Profile_Update", **{"stream": sys.stdout})
 
